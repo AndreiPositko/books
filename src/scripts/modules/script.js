@@ -1,4 +1,4 @@
-import { template } from './template.js';
+import { bookTemplate } from './bookTemplate';
 
 /** Get elements from the DOM */
 
@@ -7,6 +7,8 @@ let btnClosePopup = document.querySelector('.popup-close');
 let overlay = document.querySelector('.overlay');
 let btnEdit = document.querySelector('.popup__btn_edit');
 let inputs = document.querySelectorAll('input');
+let listBooks = document.querySelector('.list__books');
+
 
 /** function - dreate element */
 
@@ -16,6 +18,7 @@ function createElement(tagName, className) {
     return element;
 }
 
+const liWrapper = createElement('li', 'li__wrapper');
 const bookLink = createElement('a', 'book__link');
 const booksButtons = createElement('div', 'books__buttons');
 const btn = createElement('button', 'btn');
@@ -68,17 +71,18 @@ btnEdit.addEventListener('click', () => {
 /** Get data from myServer */
 
 let loadBooks = () => {
+    listBooks.innerHTML = '';
     const myServer = `http://localhost:3004/posts`;
     fetch(myServer)
         .then(function (responce) {
             return responce.json();
         })
-        .then(function (data) {
-            const ul = document.querySelector('.popup__list');
-            const html = data.map(function (item) {
-                return '<li></li>'
-            })
-            console.log(data);
+        .then(function (serverBooks) {
+            serverBooks.forEach(bookItem => {
+                console.log(bookItem);
+            });
+            liWrapper.innerHTML = bookTemplate;
+            listBooks.appendChild(liWrapper);
         });
 };
 loadBooks();
