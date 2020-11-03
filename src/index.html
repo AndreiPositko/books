@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="img/favicon.ico">
   <title>Books</title>
 </head>
 
@@ -76,42 +77,74 @@
       <div class="popup-form">
 
         <ul class="popup__list">
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__name">Введите название Вашей книги</label>
-            <input type="text" id="book__name">
+            <input class="popup__input" type="text" id="book__name">
           </li>
 
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__author">Введите автора Вашей книги</label>
-            <input type="text" id="book__author">
+            <input class="popup__input" type="text" id="book__author">
+            <select class="author__select" name="author" id="">
+              <option class="author__select-item"></option>
+              <option class="author__select-item"></option>
+              <option class="author__select-item"></option>
+              <option class="author__select-item"></option>
+              <option class="author__select-item"></option>
+            </select>
           </li>
 
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__pages">Количество страниц Вашей книги</label>
-            <input type="text" id="book__pages">
+            <input class="popup__input" type="text" id="book__pages">
           </li>
 
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__quality">Какое качество Вашей книги</label>
-            <input type="text" id="book__quality">
+            <input class="popup__input" type="text" id="book__quality">
           </li>
 
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__language">На каком языке Ваш книга</label>
-            <input type="text" id="book__language">
+            <input class="popup__input" type="text" id="book__language">
           </li>
 
-          <li>
+          <li class="popup__item">
             <label class="popup__label" for="book__year">Год издания книги</label>
-            <input type="text" id="book__year">
+            <input class="popup__input" type="text" id="book__year">
+          </li>
+
+          <li class="popup__item">
+            <label class="popup__label" for="book__img">Изображение книги</label>
+            <input class="popup__input" type="text" id="book__img">
+          </li>
+
+          <li class="popup__item">
+            <label class="popup__label" for="book__descr">Краткое описание книги</label>
+            <input class="popup__input" type="text" id="book__descr">
           </li>
         </ul>
 
         <div class="btn__popup_group">
-          <button class="popup__button btn__overlay">Добавить книгу</button>
-          <button class="popup__btn_edit btn__overlay">Редактировать</button>
+          <button class="popup__button_add btn__overlay">Добавить книгу</button>
+          <button class="popup__btn_clean btn__overlay">Очистить</button>
+          <button class="popup__btn_edit btn__overlay">Изменить книгу</button>
         </div>
+      </div>
+      <!-- /.popup-form -->
+    </div>
+    <!-- /.popup -->
+  </div>
+  <!-- /.overlay -->
 
+  <div class="overlay__inform">
+    <div class="popup">
+      <div class="popup-title_inf">Поздравляем!</div>
+      <!-- /.popup-title -->
+      <div class="popup-close_info">&times;</div>
+      <!-- /.popup-close -->
+      <div class="popup-form-inf">
+        <p class="text__popup-inf">Вы добавили новую книгу!</p>
       </div>
       <!-- /.popup-form -->
     </div>

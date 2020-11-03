@@ -1,8 +1,8 @@
 export const bookTemplate = `
 <a class="book__link" href="#">
               <div class="books__buttons">
-                <button class="btn">Удалить</button>
-                <button class="btn">Изменить</button>
+                <button class="btn btn__delete">Удалить</button>
+                <button class="btn btn__change">Изменить</button>
               </div>
               <div class="books__wrapper">
                 <div class="book__item">
