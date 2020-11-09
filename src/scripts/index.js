@@ -1,2 +1,2 @@
 import '../styles/index.scss';
-import '../scripts/modules/script';
+import '../scripts/books/script';

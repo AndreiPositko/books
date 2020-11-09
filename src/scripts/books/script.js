@@ -1,4 +1,14 @@
 import { bookTemplate } from './bookTemplate';
+import { ROUTE } from '../../constants/constans';
+
+/** URL */
+
+const urlCopmBooks = "http://localhost:3004/computers";
+const urlScienceBooks = "http://localhost:3004/nauka";
+const urlAllBooks = "http://localhost:3004/allBooks";
+const myServer = `http://localhost:3004/books`;
+const authorServer = `http://localhost:3004/authors`;
+const categoryServer = `http://localhost:3004/categories`;
 
 /** Get elements from the DOM */
 const btnEditOverlay = document.querySelector('.popup__btn_edit');
@@ -9,10 +19,10 @@ const overlay = document.querySelector('.overlay');
 const btnClean = document.querySelector('.popup__btn_clean');
 const inputs = document.querySelectorAll('input');
 const listBooks = document.querySelector('.list__books');
-const myServer = `http://localhost:3004/posts`;
-const authorServer = `http://localhost:3004/authors`;
 const addBookButton = document.querySelector('.popup__button_add');
 const overlayInfo = document.querySelector('.overlay__inform');
+const authorSelect = document.getElementById('book__author');
+const categorySelect = document.getElementById('book__categ');
 
 /** Get elements from the overlay - add new book */
 const inputTitle = document.querySelector('#book__name');
@@ -24,7 +34,7 @@ const inputYear = document.querySelector('#book__year');
 const inputImg = document.querySelector('#book__img');
 const inputDescr = document.querySelector('#book__descr');
 
-console.log(inputTitle);
+
 
 /** function - create element */
 
@@ -93,16 +103,28 @@ btnClean.addEventListener('click', () => {
   inputs.forEach(input => input.value = '');
 });
 
+/** Get author by ID */
+
+const getAuthorById = (id) => {
+  return fetch(authorServer)
+    .then(responce => responce.json())
+    .then(authorList => authorList.find(author => author.id === id).name)
+}
+
 /** Get data from myServer */
 
-let loadBooks = () => {
-    listBooks.innerHTML = '';
-    fetch(myServer)
-        .then(function (responce) {
-            return responce.json();
-        })
-        .then(function (serverBooks) {
-          serverBooks.reverse().forEach(bookItem => {
+const loadBooks = (categoryId) => {
+  listBooks.innerHTML = '';
+  fetch(urlAllBooks)
+    .then(responce => responce.json())
+    .then(booksData => {
+      if (!!categoryId) {
+       return booksData.filter(book => book.categoryID === categoryId)
+      } 
+      return booksData;
+    })
+    .then(serverBooks => {
+          serverBooks.reverse().forEach( async bookItem => {
             const liWrapper = createElement('li', 'book__item');
             liWrapper.innerHTML = bookTemplate;
 
@@ -122,14 +144,15 @@ let loadBooks = () => {
                  
             /** paste data from server into html */
             titleBook.innerHTML = `<b>Название:</b> ${bookItem.title}`;
-            author.innerHTML = `<b>Автор:</b> ${bookItem.author}`;
+
+            author.innerHTML = `<b>Автор:</b> ${await getAuthorById(bookItem.authorID)}`;
             pages.innerHTML = `<b>Страниц:</b> ${bookItem.pages}`;
             quality.innerHTML = `<b>Качество:</b> ${bookItem.quality}`;
             bookLanguage.innerHTML = `<b>Язык:</b> ${bookItem.language}`;
             yearOfProduction.inner = `<b>Год издания:</b> ${bookItem}`;
             descriptionName.innerHTML = `<b>Описание:</b>`;
             descriptionText.innerHTML = `${bookItem.description}`;
-            imgBook.setAttribute('src', bookItem.imgBook);  
+            imgBook.setAttribute('src', bookItem.imgBook); 
             
           /** append template to outer html-block */
             listBooks.appendChild(liWrapper);
@@ -137,7 +160,7 @@ let loadBooks = () => {
             let path = `${myServer}/${bookItem.id}`;
 
           /** delete book */
-            
+        
             deleteButton.addEventListener('click', () => {
               deleteBook(path);
             });
@@ -151,6 +174,11 @@ let loadBooks = () => {
                 addBookButton.style.backgroundColor = 'grey';
               };
               changeBook(bookItem);
+            });
+
+            btnEditOverlay.addEventListener('click', () => {
+              sendChangeToServer(path);
+              overlay.classList.remove('show');
             });
           });
         });
@@ -166,27 +194,70 @@ let deleteBook = (path) => {
     .then(loadBooks);
 };
 
+/** SHOW AUTHOR SELECT */
+
+const loadAuthorSelect = () => {
+  fetch(authorServer)
+    .then(responce => responce.json())
+    .then(authorData => {
+      authorData.forEach(author => {
+        const authorOption = document.createElement('option');
+        authorOption.className = 'author__option';
+        authorOption.value = author.id;
+        authorOption.innerText = author.name;
+        authorSelect.appendChild(authorOption)
+      })
+      });
+};
+loadAuthorSelect();
+
+
+/** SHOW CATEGORIES SELECT */
+
+const loadCategoriesSelect = () => {
+  fetch(categoryServer)
+    .then(responce => responce.json())
+    .then(categoryData => {
+      categoryData.forEach(category => {
+        const categoryOption = document.createElement('option');
+        categoryOption.className = 'category__option';
+        categoryOption.value = category.id;
+        categoryOption.innerText = category.title;
+        categorySelect.appendChild(categoryOption)
+      })
+      });
+};
+loadCategoriesSelect();
+
 /** ADD BOOK */
 
-let addBook = () => {
-  let add = {
+const addBook = () => {
+
+  const newBookData = {
+    categoryID: Number(categorySelect.value),
     imgBook: inputImg.value,
     title: inputTitle.value,
-    author: inputAuthor.value,
+    authorID: Number(authorSelect.value),
     pages: inputPages.value,
     quality: inputQuality.value,
     language: inputLanguage.value,
     yearOfProduction: inputYear.value,
     description: inputDescr.value,
   };
-  fetch(myServer, {
+
+  console.log('------', newBookData);
+  // if (location.pathname === '/comp') {
+  //   urlAddBook = 'http://localhost:3004/computers';
+  // }
+
+  fetch(urlAllBooks, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
     },
-    body: JSON.stringify(add),
+    body: JSON.stringify(newBookData),
   })
-    .then(loadBooks);
+    .then(loadBooks());
 };
 addBookButton.addEventListener('click', addBook);
 addBookButton.addEventListener('click', showOverlayInfo);
@@ -198,26 +269,40 @@ addBookButton.addEventListener('click', showOverlayInfo);
 
 let changeBook = (bookItem) => {
 
-  inputTitle.value = bookItem.title;
-  inputAuthor.value = bookItem.author;
-  inputPages.value = bookItem.pages;
-  inputQuality.value = bookItem.quality;
-  inputLanguage.value = bookItem.language;
-  inputYear.value = bookItem.yearOfProduction;
-  inputImg.value = bookItem.imgBook;
-  inputDescr.value = bookItem.description;
-
+    inputTitle.value = bookItem.title;
+    inputAuthor.value = bookItem.author;
+    inputPages.value = bookItem.pages;
+    inputQuality.value = bookItem.quality;
+    inputLanguage.value = bookItem.language;
+    inputYear.value = bookItem.yearOfProduction;
+    inputImg.value = bookItem.imgBook;
+    inputDescr.value = bookItem.description;
 };
 
-btnEditOverlay.addEventListener('click', () => {
-  addBook();
-  overlay.classList.remove('show');
-});
+let sendChangeToServer = (path) => {
+  let addChange = {
+    imgBook: inputImg.value,
+    title: inputTitle.value,
+    author: inputAuthor.value,
+    pages: inputPages.value,
+    quality: inputQuality.value,
+    language: inputLanguage.value,
+    yearOfProduction: inputYear.value,
+    description: inputDescr.value,
+  };
+  fetch(path, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(addChange),
+  })
+    .then(loadBooks);
+};
 
 /** VALIDATION */
 
 const inputOverlay = document.querySelectorAll('.popup__input');
-console.log(inputOverlay);
 
 addBookButton.addEventListener('click', (e) => {
   inputOverlay.forEach(element => {
@@ -239,28 +324,111 @@ let clearError = (element) => {
   // parentLi.remove.lastChild;
 };
 
-/** SELECT */
+/** History API start*/
 
-let loadAuthors = () => {
-  const authorSelect = document.querySelectorAll('.author__select-item');
+ const renderPage = (href) => {
+    if (href === ROUTE.HOME) {
+      loadBooks();
+    };
+    if (href === ROUTE.COMPUTERS) {
+       loadBooks(2);
+    }
+     if (href === ROUTE.NAUKA) {
+       loadBooks(1);
+    }
+ };
+
+const link = document.querySelectorAll('a');
+    link.forEach((element) => {
+    element.addEventListener('click', (element) => {
+      element.preventDefault();
+      const href = element.target.getAttribute('href');
+      history.pushState(null, '', href);
+      renderPage(href);
+    });
+  });
+
+window.addEventListener('popstate', () => renderPage(location.pathname));
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPage(location.pathname);
+});
+
+/** GET AUTHORS */
+
+let authorsArr = [];
+
+const getAuthors = () => {
   fetch(authorServer)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (authorData) {
-      authorData.forEach(authorItem => {
-        console.log('authorItem', authorItem.authSelect);
-        // authorSelect.value.innerHTML = authorItem.authSelect;
-        for (let i = 0; i < authorSelect.length; i++) {
-          console.log('authorSelect.value', authorSelect.value);
-          authorSelect.value = authorItem.authSelect;
-        };
-      });
+    .then((responce) => responce.json())
+    .then((dataAuthors) => {
+      authorsArr = dataAuthors;
     });
 };
+getAuthors();
 
-loadAuthors();
 
+/** History API end*/
+
+/** SELECT CATEGORY START */
+
+// let loadCategories = () => {
+//   fetch(categoryServer)
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (categoryData) {
+//       const selectCategory = document.querySelector('#book__categ');
+//         categoryData.forEach(categoryItem => {
+//         const pathCategoryId = categoryItem.category;
+//         const optionCategory = document.createElement('option', 'category__select');
+//         selectCategory.appendChild(optionCategory);
+//         optionCategory.innerText = pathCategoryId;
+//       });
+//     });
+// };
+// loadCategories();
+
+/** SELECT CATEGORY END */
+
+/** History API - 2 start*/
+// const renderPage2 = (href2) => {
+//     if (href2 === ROUTE.COMPUTERS) {
+//       getCompBooks2();
+//     }
+// };
+// const getCompBooks2 = () => {
+//   fetch(urlAllBooks)
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then((allBooksData) => {
+//       allBooksData.forEach((book) => {
+//       });
+//     });
+//     loadBooks(urlAllBooks);
+// };
+// getCompBooks2();
+// const getScienceBooks2 = () => {
+//   loadBooks2(urlScienceBooks);
+// };
+// const getAllBooks2 = () => {
+//   loadBooks2(urlAllBooks);
+// };
+// const link2 = document.querySelectorAll('a');
+//     link2.forEach((element) => {
+//     element.addEventListener('click', (element) => {
+//         element.preventDefault();
+//         const href2 = element.target.getAttribute('href');
+//         history.pushState(null, '', href2);
+//         renderPage2(href2);
+//     });
+// });
+// window.addEventListener('popstate', () => renderPage2(location.pathname));
+// document.addEventListener('DOMContentLoaded', () => {
+//     renderPage2(location.pathname);
+// });
+/** History API - 2 end*/
 
 
 

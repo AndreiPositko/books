@@ -13,7 +13,8 @@ module.exports = merge(common, {
   },
   devServer: {
     inline: true,
-    hot: true
+    hot: true,
+    historyApiFallback: true
   },
   plugins: [
     new Webpack.DefinePlugin({
