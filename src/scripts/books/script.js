@@ -6,7 +6,7 @@ import { authorServer, categoryServer } from './findItemsById/getItemsById';
 /** URL */
 
 const urlAllBooks = "http://localhost:3004/allBooks";
-const myServer = `http://localhost:3004/books`;
+const myServer = `http://localhost:3004/AllBooks`;
 
 /** Get elements from the DOM */
 
