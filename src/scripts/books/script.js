@@ -105,11 +105,22 @@ btnClean.addEventListener('click', () => {
 
 /** Get author by ID */
 
-const getAuthorById = (id) => {
-  return fetch(authorServer)
-    .then(responce => responce.json())
-    .then(authorList => authorList.find(author => author.id === id).name)
-}
+// const getAuthorById = (id) => {
+//   return fetch(authorServer)
+//     .then(responce => responce.json())
+//     .then(authorList => authorList.find(author => author.id === id).name);
+// };
+
+const getAuthorById = async (id) => {
+  const authorIdPromise = await fetch(authorServer);
+  const json = await authorIdPromise.json();
+  const responseAuthor = json.find(author => author.id === id).name;
+  console.log('responseAuthor', responseAuthor);
+  return responseAuthor;
+};
+
+getAuthorById(2);
+
 
 /** Get data from myServer */
 
@@ -119,7 +130,7 @@ const loadBooks = (categoryId) => {
     .then(responce => responce.json())
     .then(booksData => {
       if (!!categoryId) {
-       return booksData.filter(book => book.categoryID === categoryId)
+        return booksData.filter(book => book.categoryID === categoryId);
       } 
       return booksData;
     })
@@ -138,6 +149,7 @@ const loadBooks = (categoryId) => {
             let quality = liWrapper.querySelector('.book__quality');
             let bookLanguage = liWrapper.querySelector('.book__language');
             let yearOfProduction = liWrapper.querySelector('.publishing__date');
+            let categoryBook = liWrapper.querySelector('.book__category');
             let descriptionName = liWrapper.querySelector('.description__name');
             let descriptionText = liWrapper.querySelector('.description__text');
             let imgBook = liWrapper.querySelector('.book__img');
@@ -149,7 +161,8 @@ const loadBooks = (categoryId) => {
             pages.innerHTML = `<b>Страниц:</b> ${bookItem.pages}`;
             quality.innerHTML = `<b>Качество:</b> ${bookItem.quality}`;
             bookLanguage.innerHTML = `<b>Язык:</b> ${bookItem.language}`;
-            yearOfProduction.inner = `<b>Год издания:</b> ${bookItem}`;
+            yearOfProduction.innerHTML = `<b>Год издания:</b> ${bookItem.yearOfProduction}`;
+            categoryBook.innerHTML = `<b>Категория:</b> ${bookItem.categoryID}`;
             descriptionName.innerHTML = `<b>Описание:</b>`;
             descriptionText.innerHTML = `${bookItem.description}`;
             imgBook.setAttribute('src', bookItem.imgBook); 
@@ -205,8 +218,8 @@ const loadAuthorSelect = () => {
         authorOption.className = 'author__option';
         authorOption.value = author.id;
         authorOption.innerText = author.name;
-        authorSelect.appendChild(authorOption)
-      })
+        authorSelect.appendChild(authorOption);
+      });
       });
 };
 loadAuthorSelect();
@@ -223,8 +236,8 @@ const loadCategoriesSelect = () => {
         categoryOption.className = 'category__option';
         categoryOption.value = category.id;
         categoryOption.innerText = category.title;
-        categorySelect.appendChild(categoryOption)
-      })
+        categorySelect.appendChild(categoryOption);
+      });
       });
 };
 loadCategoriesSelect();
