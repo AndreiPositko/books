@@ -1,16 +1,15 @@
 import { bookTemplate } from './bookTemplate';
 import { ROUTE } from '../../constants/constans';
+import { getAuthorById, getCategoryById } from './findItemsById/getItemsById';
+import { authorServer, categoryServer } from './findItemsById/getItemsById';
 
 /** URL */
 
-const urlCopmBooks = "http://localhost:3004/computers";
-const urlScienceBooks = "http://localhost:3004/nauka";
 const urlAllBooks = "http://localhost:3004/allBooks";
 const myServer = `http://localhost:3004/books`;
-const authorServer = `http://localhost:3004/authors`;
-const categoryServer = `http://localhost:3004/categories`;
 
 /** Get elements from the DOM */
+
 const btnEditOverlay = document.querySelector('.popup__btn_edit');
 const btnAddBook = document.querySelector('.add__book');
 const btnClosePopup = document.querySelector('.popup-close');
@@ -33,7 +32,6 @@ const inputLanguage = document.querySelector('#book__language');
 const inputYear = document.querySelector('#book__year');
 const inputImg = document.querySelector('#book__img');
 const inputDescr = document.querySelector('#book__descr');
-
 
 
 /** function - create element */
@@ -103,25 +101,6 @@ btnClean.addEventListener('click', () => {
   inputs.forEach(input => input.value = '');
 });
 
-/** Get author by ID */
-
-// const getAuthorById = (id) => {
-//   return fetch(authorServer)
-//     .then(responce => responce.json())
-//     .then(authorList => authorList.find(author => author.id === id).name);
-// };
-
-const getAuthorById = async (id) => {
-  const authorIdPromise = await fetch(authorServer);
-  const json = await authorIdPromise.json();
-  const responseAuthor = json.find(author => author.id === id).name;
-  console.log('responseAuthor', responseAuthor);
-  return responseAuthor;
-};
-
-getAuthorById(2);
-
-
 /** Get data from myServer */
 
 const loadBooks = (categoryId) => {
@@ -162,7 +141,7 @@ const loadBooks = (categoryId) => {
             quality.innerHTML = `<b>Качество:</b> ${bookItem.quality}`;
             bookLanguage.innerHTML = `<b>Язык:</b> ${bookItem.language}`;
             yearOfProduction.innerHTML = `<b>Год издания:</b> ${bookItem.yearOfProduction}`;
-            categoryBook.innerHTML = `<b>Категория:</b> ${bookItem.categoryID}`;
+            categoryBook.innerHTML = `<b>Категория:</b> ${await getCategoryById(bookItem.categoryID)}`;
             descriptionName.innerHTML = `<b>Описание:</b>`;
             descriptionText.innerHTML = `${bookItem.description}`;
             imgBook.setAttribute('src', bookItem.imgBook); 
@@ -257,12 +236,7 @@ const addBook = () => {
     yearOfProduction: inputYear.value,
     description: inputDescr.value,
   };
-
   console.log('------', newBookData);
-  // if (location.pathname === '/comp') {
-  //   urlAddBook = 'http://localhost:3004/computers';
-  // }
-
   fetch(urlAllBooks, {
     method: 'POST',
     headers: {
@@ -367,81 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPage(location.pathname);
 });
 
-/** GET AUTHORS */
-
-let authorsArr = [];
-
-const getAuthors = () => {
-  fetch(authorServer)
-    .then((responce) => responce.json())
-    .then((dataAuthors) => {
-      authorsArr = dataAuthors;
-    });
-};
-getAuthors();
-
-
-/** History API end*/
-
-/** SELECT CATEGORY START */
-
-// let loadCategories = () => {
-//   fetch(categoryServer)
-//     .then(function (response) {
-//       return response.json();
-//     })
-//     .then(function (categoryData) {
-//       const selectCategory = document.querySelector('#book__categ');
-//         categoryData.forEach(categoryItem => {
-//         const pathCategoryId = categoryItem.category;
-//         const optionCategory = document.createElement('option', 'category__select');
-//         selectCategory.appendChild(optionCategory);
-//         optionCategory.innerText = pathCategoryId;
-//       });
-//     });
-// };
-// loadCategories();
-
-/** SELECT CATEGORY END */
-
-/** History API - 2 start*/
-// const renderPage2 = (href2) => {
-//     if (href2 === ROUTE.COMPUTERS) {
-//       getCompBooks2();
-//     }
-// };
-// const getCompBooks2 = () => {
-//   fetch(urlAllBooks)
-//     .then(function (response) {
-//       return response.json();
-//     })
-//     .then((allBooksData) => {
-//       allBooksData.forEach((book) => {
-//       });
-//     });
-//     loadBooks(urlAllBooks);
-// };
-// getCompBooks2();
-// const getScienceBooks2 = () => {
-//   loadBooks2(urlScienceBooks);
-// };
-// const getAllBooks2 = () => {
-//   loadBooks2(urlAllBooks);
-// };
-// const link2 = document.querySelectorAll('a');
-//     link2.forEach((element) => {
-//     element.addEventListener('click', (element) => {
-//         element.preventDefault();
-//         const href2 = element.target.getAttribute('href');
-//         history.pushState(null, '', href2);
-//         renderPage2(href2);
-//     });
-// });
-// window.addEventListener('popstate', () => renderPage2(location.pathname));
-// document.addEventListener('DOMContentLoaded', () => {
-//     renderPage2(location.pathname);
-// });
-/** History API - 2 end*/
 
 
 

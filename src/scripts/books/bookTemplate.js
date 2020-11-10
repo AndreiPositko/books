@@ -6,7 +6,7 @@ export const bookTemplate = `
               </div>
               <div class="books__wrapper">
                 <div class="book__item">
-                  <img class="book__img" src="img/algoritm.jpg" alt="">
+                  <img class="book__img" src="#" alt="">
                 </div>
                   <div class="books__info">
                   <p class="title__book"></p>
