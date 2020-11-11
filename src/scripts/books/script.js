@@ -1,12 +1,11 @@
 import { bookTemplate } from './bookTemplate';
-import { ROUTE } from '../../constants/constans';
+import { ROUTE, booksApi, authorApi, categoryApi } from '../constants';
 import { getAuthorById, getCategoryById } from './findItemsById/getItemsById';
-import { authorServer, categoryServer } from './findItemsById/getItemsById';
+import { initCommonInfo, getBooks, getAuthors, getCategories } from '../common/index';
+import { authorsArr, categoriesArr, booksArr } from '../common/index';
 
-/** URL */
-
-const urlAllBooks = "http://localhost:3004/allBooks";
-const myServer = `http://localhost:3004/AllBooks`;
+initCommonInfo()
+  .then(() => renderBooks(booksArr));
 
 /** Get elements from the DOM */
 
@@ -16,7 +15,7 @@ const btnClosePopup = document.querySelector('.popup-close');
 const btnClosePopupInfo = document.querySelector('.popup-close_info');
 const overlay = document.querySelector('.overlay');
 const btnClean = document.querySelector('.popup__btn_clean');
-const inputs = document.querySelectorAll('input');
+const inputs = document.querySelectorAll('.popup__input');
 const listBooks = document.querySelector('.list__books');
 const addBookButton = document.querySelector('.popup__button_add');
 const overlayInfo = document.querySelector('.overlay__inform');
@@ -33,10 +32,9 @@ const inputYear = document.querySelector('#book__year');
 const inputImg = document.querySelector('#book__img');
 const inputDescr = document.querySelector('#book__descr');
 
-
 /** function - create element */
 
-let createElement = (tagName, className) => {
+const createElementandAddClass = (tagName='div', className='') => {
   const element = document.createElement(tagName);
   element.classList = className;
   return element;
@@ -54,14 +52,14 @@ btnAddBook.addEventListener('click', () => {
 
 /** Close overlay */
 
-let closeOverlay = () => {
+const closeOverlay = () => {
   /**  close by clicking on close button */
   btnClosePopup.addEventListener('click', () => {
     overlay.classList.remove('show');
   }); 
 
   /** Close overlay clicking on another place of the window */
-  window.addEventListener('click', (e) => {
+  overlay.addEventListener('click', (e) => {
     if (e.target === overlay) {
       overlay.classList.remove('show');
     };
@@ -72,22 +70,22 @@ closeOverlay();
 /** OVERLAY INFO */
 
 /** Show overlay-info */
-let showOverlayInfo = () => {
+const showOverlayInfo = () => {
   addBookButton.addEventListener('click', () => {
-    // overlay.classList.remove('show');
-    // overlayInfo.classList.add('show');
+    overlay.classList.remove('show');
+    overlayInfo.classList.add('show');
   });
 };
 showOverlayInfo();
 
-let closeOverlayInfo = () => {
+const closeOverlayInfo = () => {
   /**  close by clicking on close button */
-  btnClosePopupInfo.onclick = function () {
-    overlayInfo.classList.remove('show');
-  };
+  btnClosePopupInfo.addEventListener( 'click', ()=>
+    overlayInfo.classList.remove('show')
+  );
 
   /** Close overlay clicking on another place of the window */
-  window.addEventListener('click', (e) => {
+  overlay.addEventListener('click', (e) => {
     if (e.target === overlayInfo) {
       overlayInfo.classList.remove('show');
     }
@@ -101,85 +99,80 @@ btnClean.addEventListener('click', () => {
   inputs.forEach(input => input.value = '');
 });
 
-/** Get data from myServer */
-
-const loadBooks = (categoryId) => {
+const renderBooks = (dataArr) => {
   listBooks.innerHTML = '';
-  fetch(urlAllBooks)
-    .then(responce => responce.json())
-    .then(booksData => {
-      if (!!categoryId) {
-        return booksData.filter(book => book.categoryID === categoryId);
-      } 
-      return booksData;
-    })
-    .then(serverBooks => {
-          serverBooks.reverse().forEach( async bookItem => {
-            const liWrapper = createElement('li', 'book__item');
-            liWrapper.innerHTML = bookTemplate;
 
-          /** find all selectors  */
-            let deleteButton = liWrapper.querySelector('.btn__delete');
-            let changeButton = liWrapper.querySelector('.btn__change');
+  dataArr.reverse().forEach(bookItem => {
+    const liWrapper = createElementandAddClass('li', 'book__item');
+    liWrapper.innerHTML = bookTemplate;
+
+    /** find all selectors  */
+    let deleteButton = liWrapper.querySelector('.btn__delete');
+    let changeButton = liWrapper.querySelector('.btn__change');
   
-            let titleBook = liWrapper.querySelector('.title__book');
-            let author = liWrapper.querySelector('.book__author');
-            let pages = liWrapper.querySelector('.book__pages');
-            let quality = liWrapper.querySelector('.book__quality');
-            let bookLanguage = liWrapper.querySelector('.book__language');
-            let yearOfProduction = liWrapper.querySelector('.publishing__date');
-            let categoryBook = liWrapper.querySelector('.book__category');
-            let descriptionName = liWrapper.querySelector('.description__name');
-            let descriptionText = liWrapper.querySelector('.description__text');
-            let imgBook = liWrapper.querySelector('.book__img');
+    let titleBook = liWrapper.querySelector('.title__book');
+    let author = liWrapper.querySelector('.book__author');
+    let pages = liWrapper.querySelector('.book__pages');
+    let quality = liWrapper.querySelector('.book__quality');
+    let bookLanguage = liWrapper.querySelector('.book__language');
+    let yearOfProduction = liWrapper.querySelector('.publishing__date');
+    let categoryBook = liWrapper.querySelector('.book__category');
+    let descriptionName = liWrapper.querySelector('.description__name');
+    let descriptionText = liWrapper.querySelector('.description__text');
+    let imgBook = liWrapper.querySelector('.book__img');
                  
-            /** paste data from server into html */
-            titleBook.innerHTML = `<b>Название:</b> ${bookItem.title}`;
-
-            author.innerHTML = `<b>Автор:</b> ${await getAuthorById(bookItem.authorID)}`;
-            pages.innerHTML = `<b>Страниц:</b> ${bookItem.pages}`;
-            quality.innerHTML = `<b>Качество:</b> ${bookItem.quality}`;
-            bookLanguage.innerHTML = `<b>Язык:</b> ${bookItem.language}`;
-            yearOfProduction.innerHTML = `<b>Год издания:</b> ${bookItem.yearOfProduction}`;
-            categoryBook.innerHTML = `<b>Категория:</b> ${await getCategoryById(bookItem.categoryID)}`;
-            descriptionName.innerHTML = `<b>Описание:</b>`;
-            descriptionText.innerHTML = `${bookItem.description}`;
-            imgBook.setAttribute('src', bookItem.imgBook); 
+    /** paste data from server into html */
+    titleBook.innerHTML = `<b>Название:</b> ${bookItem.title}`;
+    author.innerHTML = `<b>Автор:</b> ${getAuthorById(bookItem.authorID)}`;
+    pages.innerHTML = `<b>Страниц:</b> ${bookItem.pages}`;
+    quality.innerHTML = `<b>Качество:</b> ${bookItem.quality}`;
+    bookLanguage.innerHTML = `<b>Язык:</b> ${bookItem.language}`;
+    yearOfProduction.innerHTML = `<b>Год издания:</b> ${bookItem.yearOfProduction}`;
+    categoryBook.innerHTML = `<b>Категория:</b> ${getCategoryById(bookItem.categoryID)}`;
+    descriptionName.innerHTML = `<b>Описание:</b>`;
+    descriptionText.innerHTML = `${bookItem.description}`;
+    imgBook.setAttribute('src', bookItem.imgBook);
             
-          /** append template to outer html-block */
-            listBooks.appendChild(liWrapper);
+    /** append template to outer html-block */
+    listBooks.appendChild(liWrapper);
 
-            let path = `${myServer}/${bookItem.id}`;
+    let path = `${booksApi}/${bookItem.id}`;
 
-          /** delete book */
+    /** delete book */
         
-            deleteButton.addEventListener('click', () => {
-              deleteBook(path);
-            });
+    deleteButton.addEventListener('click', () => {
+      deleteBook(path);
+    });
 
-          /** change book */
+    /** change book */
             
-            changeButton.addEventListener('click', (e) => {
-                overlay.classList.add('show');
-              if (e.target === changeButton) {
-                addBookButton.disabled = true;
-                addBookButton.style.backgroundColor = 'grey';
-              };
-              changeBook(bookItem);
-            });
+    changeButton.addEventListener('click', (e) => {
+      overlay.classList.add('show');
+      if (e.target === changeButton) {
+        addBookButton.disabled = true;
+        addBookButton.style.backgroundColor = 'grey';
+      };
+      writeValuesToInputs(bookItem);
+    });
 
-            btnEditOverlay.addEventListener('click', () => {
-              sendChangeToServer(path);
-              overlay.classList.remove('show');
-            });
-          });
-        });
+    btnEditOverlay.addEventListener('click', () => {
+      sendChangeToServer(path);
+      overlay.classList.remove('show');
+    });
+  });
 };
-loadBooks();
+
+const renderBooksCategory = (categoryId) => {
+  if (!!categoryId) {
+    renderBooks(booksArr.filter(book => book.categoryID === categoryId));
+  } else {
+    renderBooks(booksArr);
+  }
+};
 
 /** DELETE BOOK */
 
-let deleteBook = (path) => {
+const deleteBook = (path) => {
   fetch(path, {
     method: 'DELETE'
   })
@@ -189,7 +182,7 @@ let deleteBook = (path) => {
 /** SHOW AUTHOR SELECT */
 
 const loadAuthorSelect = () => {
-  fetch(authorServer)
+  fetch(authorApi)
     .then(responce => responce.json())
     .then(authorData => {
       authorData.forEach(author => {
@@ -203,11 +196,10 @@ const loadAuthorSelect = () => {
 };
 loadAuthorSelect();
 
-
 /** SHOW CATEGORIES SELECT */
 
 const loadCategoriesSelect = () => {
-  fetch(categoryServer)
+  fetch(categoryApi)
     .then(responce => responce.json())
     .then(categoryData => {
       categoryData.forEach(category => {
@@ -224,20 +216,18 @@ loadCategoriesSelect();
 /** ADD BOOK */
 
 const addBook = () => {
-
   const newBookData = {
-    categoryID: Number(categorySelect.value),
+    categoryID: +(categorySelect.value),
     imgBook: inputImg.value,
     title: inputTitle.value,
-    authorID: Number(authorSelect.value),
+    authorID: +(authorSelect.value),
     pages: inputPages.value,
     quality: inputQuality.value,
     language: inputLanguage.value,
     yearOfProduction: inputYear.value,
     description: inputDescr.value,
   };
-  console.log('------', newBookData);
-  fetch(urlAllBooks, {
+  fetch(booksApi, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
@@ -254,7 +244,7 @@ addBookButton.addEventListener('click', showOverlayInfo);
   overlay.classList.add('show');
  });
 
-let changeBook = (bookItem) => {
+const writeValuesToInputs = (bookItem) => {
 
     inputTitle.value = bookItem.title;
     inputAuthor.value = bookItem.author;
@@ -266,7 +256,7 @@ let changeBook = (bookItem) => {
     inputDescr.value = bookItem.description;
 };
 
-let sendChangeToServer = (path) => {
+const sendChangeToServer = (path) => {
   let addChange = {
     imgBook: inputImg.value,
     title: inputTitle.value,
@@ -302,7 +292,7 @@ addBookButton.addEventListener('click', (e) => {
   });
 });
 
-let clearError = (element) => {
+const clearError = (element) => {
   element.classList.remove('err');
   // const errorText = document.querySelector('.error__text');
   // errorText.closest('.popup__item').removeChild(errorText);
@@ -313,15 +303,15 @@ let clearError = (element) => {
 
 /** History API start*/
 
- const renderPage = (href) => {
+const renderPage = (href) => {
     if (href === ROUTE.HOME) {
-      loadBooks();
+      renderBooks(booksArr);
     };
     if (href === ROUTE.COMPUTERS) {
-       loadBooks(2);
+      renderBooksCategory(2);
     }
-     if (href === ROUTE.NAUKA) {
-       loadBooks(1);
+    if (href === ROUTE.NAUKA) {
+      renderBooksCategory(1);
     }
  };
 
