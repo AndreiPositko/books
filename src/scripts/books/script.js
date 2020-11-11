@@ -3,9 +3,7 @@ import { ROUTE, booksApi, authorApi, categoryApi } from '../constants';
 import { getAuthorById, getCategoryById } from './findItemsById/getItemsById';
 import { initCommonInfo, getBooks, getAuthors, getCategories } from '../common/index';
 import { authorsArr, categoriesArr, booksArr } from '../common/index';
-
-initCommonInfo()
-  .then(() => renderBooks(booksArr));
+import { categId1, categId2 } from './findItemsById/getItemsById';
 
 /** Get elements from the DOM */
 
@@ -31,6 +29,12 @@ const inputLanguage = document.querySelector('#book__language');
 const inputYear = document.querySelector('#book__year');
 const inputImg = document.querySelector('#book__img');
 const inputDescr = document.querySelector('#book__descr');
+
+
+/** Main Init Function */
+
+initCommonInfo()
+  .then(() => renderBooks(booksArr));
 
 /** function - create element */
 
@@ -308,10 +312,10 @@ const renderPage = (href) => {
       renderBooks(booksArr);
     };
     if (href === ROUTE.COMPUTERS) {
-      renderBooksCategory(2);
+      renderBooksCategory(categId2);
     }
     if (href === ROUTE.NAUKA) {
-      renderBooksCategory(1);
+      renderBooksCategory(categId1);
     }
  };
 
