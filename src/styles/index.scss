@@ -168,6 +168,23 @@ img {
   border-bottom: 1px solid black;
 }
 
+li.all__books a {
+  display: inline-block;
+  width: 100%;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-style: normal;
+  background-color: rgb(185, 231, 110);
+  padding: 7px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.books__categories li.all__books::before,
+.books__categories li.all__books::after {
+  display: none;
+}
+
 .books__wrapper {
   display: flex;
 }
@@ -227,7 +244,7 @@ img {
 .popup {
   position: fixed;
   left: 50%;
-  top: 200px;
+  top: 160px;
   width: 750px;
   transform: translate(-50%);
   background-color: #fff;
@@ -271,6 +288,10 @@ img {
   font-size: 18px;
 }
 
+.popup__label.textarea {
+  text-align: center;
+}
+
 .popup__list {
   display: flex;
   flex-wrap: wrap;
@@ -287,10 +308,20 @@ img {
   list-style: none;
 }
 
-.popup__input {
-  font-size: 20px;
-  // margin-bottom: 10px;
+.popup__item.textarea {
+  margin-top: 10px;
   width: 100%;
+}
+
+.popup__input,
+.popup__select,
+.popup__textarea {
+  font-size: 20px;
+  width: 100%;
+}
+
+.popup__textarea {
+  resize: none;
 }
 
 .btn__popup_group {

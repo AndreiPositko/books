@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="img/favicon.ico">
-  <title>Books</title>
+  <!-- <link rel="shortcut icon" href="img/favicon.ico"> -->
+  <title></title>
 </head>
 
 <body class="body">
@@ -27,7 +27,7 @@
 
         <div class="header__navigation">
           <ul class="nav__list">
-            <li><a href="#">Главная</a></li>
+            <li><a href="/home">Главная</a></li>
             <li><a href="#">Регистрация</a></li>
             <li><a href="#">Отзывы</a></li>
             <li><a href="#">Контакты</a></li>
@@ -44,8 +44,9 @@
     <div class="container row_2">
       <div class="aside__block">
         <ul class="books__categories">
-          <li><a href="#">Компютерная литература</a></li>
-          <li><a href="#">Наука и образование</a></li>
+          <li class="all__books"><a href="/home">Все книги</a></li>
+          <li><a href="/comp">Компютерная литература</a></li>
+          <li><a href="/nauka">Наука и образование</a></li>
           <li><a href="#">Технические издания</a></li>
           <li><a href="#">Дом и семейный очаг</a></li>
           <li><a href="#">Художественная литература</a></li>
@@ -84,13 +85,7 @@
 
           <li class="popup__item">
             <label class="popup__label" for="book__author">Введите автора Вашей книги</label>
-            <input class="popup__input" type="text" id="book__author">
-            <select class="author__select" name="author" id="">
-              <option class="author__select-item"></option>
-              <option class="author__select-item"></option>
-              <option class="author__select-item"></option>
-              <option class="author__select-item"></option>
-              <option class="author__select-item"></option>
+            <select class="popup__select" type="text" id="book__author">
             </select>
           </li>
 
@@ -120,8 +115,13 @@
           </li>
 
           <li class="popup__item">
-            <label class="popup__label" for="book__descr">Краткое описание книги</label>
-            <input class="popup__input" type="text" id="book__descr">
+            <label class="popup__label" for="book__categ">Категория книги</label>
+            <select class="popup__select" type="text" id="book__categ"></select>
+          </li>
+
+          <li class="popup__item textarea">
+            <label class="popup__label textarea" for="book__descr">Краткое описание книги</label>
+            <textarea rows="4" colls="10" class="popup__textarea" type="text" id="book__descr"></textarea>
           </li>
         </ul>
 
