@@ -144,3 +144,11 @@ document.querySelector('.add__book').addEventListener('click', createBook);
 
 overlay.addEventListener('click', closeModal);
 closeBtnNode.addEventListener('click', closeModal);
+
+// ! Search
+
+const inputSearch = document.querySelector('.header__input input');
+
+inputSearch.addEventListener('input', (e) => {
+	console.warn('-------', e.target.value);
+});
