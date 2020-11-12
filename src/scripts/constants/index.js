@@ -1,5 +1,11 @@
 const BASE = 'http://localhost:3004';
 
+export const urls = {
+	booksNauka: { id: 1, href: '/nauka' },
+	booksComp: { id: 2, href: '/comp' },
+	home: { id: 3, href: '/' },
+};
+
 export const api = {
 	books: {
 		getBook: async (id) => {
