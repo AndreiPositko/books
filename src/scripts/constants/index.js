@@ -1,17 +1,52 @@
+const BASE = 'http://localhost:3004';
 
-const ROUTE = {
-    HOME: '/home',
-    COMPUTERS: '/comp',
-    NAUKA: '/nauka'
-};
-
-const authorApi = `http://localhost:3004/authors`;
-const categoryApi = `http://localhost:3004/categories`;
-const booksApi = "http://localhost:3004/allBooks";
-
-export {
-    authorApi,
-    categoryApi,
-    booksApi,
-    ROUTE
+export const api = {
+	books: {
+		getBook: async (id) => {
+			try {
+				const book = await fetch(`${BASE}/allBooks/${id}`).then((res) => res.json());
+				return book;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
+		getBooks: async () => {
+			try {
+				const books = await fetch(`${BASE}/allBooks`).then((res) => res.json());
+				return books;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
+		deleteBook: async (id) => {
+			try {
+				const deletedBook = await fetch(`${BASE}/allBooks/${id}`).then((res) => res.json());
+				return deletedBook;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
+		createBook: () => {},
+		editBook: () => {},
+	},
+	authors: {
+		getAuthors: async () => {
+			try {
+				const authors = await fetch(`${BASE}/authors`).then((res) => res.json());
+				return authors;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
+	},
+	categories: {
+		getCategories: async () => {
+			try {
+				const categories = await fetch(`${BASE}/categories`).then((res) => res.json());
+				return categories;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
+	},
 };
