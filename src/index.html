@@ -70,7 +70,9 @@
   </main>
 
   <div class="overlay">
-    <div class="popup">
+  </div>
+
+  <div class="popup">
       <div class="popup-title">Введите данные Вашей книги</div>
       <!-- /.popup-title -->
       <div class="popup-close">&times;</div>
@@ -86,6 +88,7 @@
           <li class="popup__item">
             <label class="popup__label" for="book__author">Введите автора Вашей книги</label>
             <select class="popup__select" type="text" id="book__author">
+              <option>Select Author</option>
             </select>
           </li>
 
@@ -116,7 +119,9 @@
 
           <li class="popup__item">
             <label class="popup__label" for="book__categ">Категория книги</label>
-            <select class="popup__select" type="text" id="book__categ"></select>
+            <select class="popup__select" type="text" id="book__categ">
+                <option>Select Category</option>
+            </select>
           </li>
 
           <li class="popup__item textarea">
@@ -134,8 +139,6 @@
       <!-- /.popup-form -->
     </div>
     <!-- /.popup -->
-  </div>
-  <!-- /.overlay -->
 
   <div class="overlay__inform">
     <div class="popup">

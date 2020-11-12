@@ -3,6 +3,9 @@ import { bookTemplate } from './bookTemplate';
 
 // ! Variables
 const listBooksNode = document.querySelector('.list__books');
+const overlay = document.querySelector('.overlay');
+const popup = document.querySelector('.popup');
+const closeBtnNode = document.querySelector('.popup-close');
 
 const getCurrentDataById = (data, id) => {
 	const object = data.find((item) => item.id === id);
@@ -110,3 +113,34 @@ window.addEventListener('popstate', () => {
 document.addEventListener('DOMContentLoaded', () => {
 	render(location.pathname);
 });
+
+const closeModal = () => {
+	popup.style.display = 'none';
+	overlay.style.display = 'none';
+};
+
+const createBook = async () => {
+	popup.style.display = 'block';
+	overlay.style.display = 'block';
+	const authors = await api.authors.getAuthors();
+	const categories = await api.categories.getCategories();
+	const authSelect = document.querySelector('#book__author');
+	const catSelect = document.querySelector('#book__categ');
+	authors.forEach((author) => {
+		const option = document.createElement('option');
+		option.setAttribute('value', author.id);
+		option.innerText = author.name;
+		authSelect.appendChild(option);
+	});
+	categories.forEach((category) => {
+		const option = document.createElement('option');
+		option.setAttribute('value', category.id);
+		option.innerText = category.title;
+		catSelect.appendChild(option);
+	});
+};
+
+document.querySelector('.add__book').addEventListener('click', createBook);
+
+overlay.addEventListener('click', closeModal);
+closeBtnNode.addEventListener('click', closeModal);
