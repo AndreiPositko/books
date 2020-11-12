@@ -238,7 +238,7 @@ const addBook = () => {
     },
     body: JSON.stringify(newBookData),
   })
-    .then(loadBooks());
+    .then(renderBooks());
 };
 addBookButton.addEventListener('click', addBook);
 addBookButton.addEventListener('click', showOverlayInfo);
@@ -262,9 +262,10 @@ const writeValuesToInputs = (bookItem) => {
 
 const sendChangeToServer = (path) => {
   let addChange = {
+    categoryID: +(categorySelect.value),
     imgBook: inputImg.value,
     title: inputTitle.value,
-    author: inputAuthor.value,
+    authorID: +(authorSelect.value),
     pages: inputPages.value,
     quality: inputQuality.value,
     language: inputLanguage.value,
@@ -278,7 +279,7 @@ const sendChangeToServer = (path) => {
     },
     body: JSON.stringify(addChange),
   })
-    .then(loadBooks);
+    .then(reBooks);
 };
 
 /** VALIDATION */
