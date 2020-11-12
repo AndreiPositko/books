@@ -17,9 +17,6 @@ export const bookTemplate = `
                   <p class="publishing__date"></p>
                   <p class="book__category"></p>
                   <div class="block__description">
-                    <b>
-                      <p class="description__name">Описание:</p>
-                    </b>
                     <p class="description__text"></p>
                   </div>
                 </div>

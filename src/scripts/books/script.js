@@ -1,6 +1,42 @@
 import { api } from '../constants';
+import { bookTemplate } from './bookTemplate';
 
-console.warn(api);
+// ! Variables
+const listBooksNode = document.querySelector('.list__books');
+
+const render = async () => {
+	const books = await api.books.getBooks();
+	listBooksNode.innerHTML = '';
+	books.forEach((book) => {
+		const { quality, language, title, authorID, pages, yearOfProduction, categoryID, description, imgBook } = book;
+
+		const bookWrapper = document.createElement('li');
+		bookWrapper.innerHTML = bookTemplate;
+		bookWrapper.querySelector('.title__book').innerText = title;
+		bookWrapper.querySelector('.book__author').innerHTML = `<b>Автор</b>: ${authorID}`;
+
+		if (pages) {
+			bookWrapper.querySelector('.book__pages').innerHTML = `<b>Страницы</b>:${pages}`;
+		}
+		if (quality) {
+			bookWrapper.querySelector('.book__quality').innerHTML = `<b>Качество</b>:${quality}`;
+		}
+		if (language) {
+			bookWrapper.querySelector('.book__language').innerHTML = `<b>Язык</b>:${language}`;
+		}
+		if (yearOfProduction) {
+			bookWrapper.querySelector('.publishing__date').innerHTML = `<b>Год</b>:${yearOfProduction}`;
+		}
+
+		bookWrapper.querySelector('.book__category').innerHTML = `<b>Категория</b>:${categoryID}`;
+		bookWrapper.querySelector('.description__text').innerHTML = `<b>Описание</b>:${description}`;
+		bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
+		bookWrapper.querySelector('.book__img').setAttribute('alt', title);
+		listBooksNode.appendChild(bookWrapper);
+	});
+};
+
+render();
 
 // import { bookTemplate } from './bookTemplate';
 // import { ROUTE, booksApi, authorApi, categoryApi } from '../constants';
