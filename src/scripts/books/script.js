@@ -4,8 +4,21 @@ import { bookTemplate } from './bookTemplate';
 // ! Variables
 const listBooksNode = document.querySelector('.list__books');
 
+const getCurrentDataById = (data, id) => {
+	const object = data.find((item) => item.id === id);
+	if (!object) {
+		return '';
+	}
+
+	const res = object.title ? object.title : object.name;
+	return res;
+};
+
 const render = async () => {
 	const books = await api.books.getBooks();
+	const authors = await api.authors.getAuthors();
+	const categories = await api.categories.getCategories();
+
 	listBooksNode.innerHTML = '';
 	books.forEach((book) => {
 		const { quality, language, title, authorID, pages, yearOfProduction, categoryID, description, imgBook } = book;
@@ -13,7 +26,7 @@ const render = async () => {
 		const bookWrapper = document.createElement('li');
 		bookWrapper.innerHTML = bookTemplate;
 		bookWrapper.querySelector('.title__book').innerText = title;
-		bookWrapper.querySelector('.book__author').innerHTML = `<b>Автор</b>: ${authorID}`;
+		bookWrapper.querySelector('.book__author').innerHTML = `<b>Автор</b>: ${getCurrentDataById(authors, authorID)}`;
 
 		if (pages) {
 			bookWrapper.querySelector('.book__pages').innerHTML = `<b>Страницы</b>:${pages}`;
@@ -28,7 +41,10 @@ const render = async () => {
 			bookWrapper.querySelector('.publishing__date').innerHTML = `<b>Год</b>:${yearOfProduction}`;
 		}
 
-		bookWrapper.querySelector('.book__category').innerHTML = `<b>Категория</b>:${categoryID}`;
+		bookWrapper.querySelector('.book__category').innerHTML = `<b>Категория</b>:${getCurrentDataById(
+			categories,
+			categoryID
+		)}`;
 		bookWrapper.querySelector('.description__text').innerHTML = `<b>Описание</b>:${description}`;
 		bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
 		bookWrapper.querySelector('.book__img').setAttribute('alt', title);
