@@ -26,7 +26,7 @@ export const api = {
 		},
 		deleteBook: async (id) => {
 			try {
-				const deletedBook = await fetch(`${BASE}/allBooks/${id}`).then((res) => res.json());
+				const deletedBook = await fetch(`${BASE}/allBooks/${id}`, { method: 'DELETE' }).then((res) => res.json());
 				return deletedBook;
 			} catch (error) {
 				console.warn(error);

@@ -41,23 +41,26 @@ const filterBooks = (books, url) => {
 	return [];
 };
 
-const render = async (currentUrl) => {
+const deleteBook = async (id) => {
+	await api.books.deleteBook(id);
+	render(location.pathname);
+};
+
+async function render(currentUrl) {
 	let books = await api.books.getBooks();
 	const authors = await api.authors.getAuthors();
 	const categories = await api.categories.getCategories();
 	books = filterBooks(books, currentUrl);
 
 	if (!books.length) {
-		console.warn('111111111111');
 		rederPageNotFound();
 	} else {
-		console.warn('2222222222');
 		removeTitle404();
 	}
 
 	listBooksNode.innerHTML = '';
 	books.forEach((book) => {
-		const { quality, language, title, authorID, pages, yearOfProduction, categoryID, description, imgBook } = book;
+		const { quality, language, title, authorID, pages, yearOfProduction, categoryID, description, imgBook, id } = book;
 
 		const bookWrapper = document.createElement('li');
 		bookWrapper.innerHTML = bookTemplate;
@@ -84,9 +87,12 @@ const render = async (currentUrl) => {
 		bookWrapper.querySelector('.description__text').innerHTML = `<b>Описание</b>:${description}`;
 		bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
 		bookWrapper.querySelector('.book__img').setAttribute('alt', title);
+
+		bookWrapper.querySelector('.btn__delete').addEventListener('click', () => deleteBook(id));
+
 		listBooksNode.appendChild(bookWrapper);
 	});
-};
+}
 
 document.querySelectorAll('a').forEach((link) =>
 	link.addEventListener('click', (e) => {

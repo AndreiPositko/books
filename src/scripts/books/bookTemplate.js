@@ -1,5 +1,5 @@
 export const bookTemplate = `
-<a class="book__link" href="#">
+<div class="book__link" >
               <div class="books__buttons">
                 <button class="btn btn__delete">Удалить</button>
                 <button class="btn btn__change">Изменить</button>
@@ -21,4 +21,4 @@ export const bookTemplate = `
                   </div>
                 </div>
               </div>
-            </a>`;
+            </div>`;
