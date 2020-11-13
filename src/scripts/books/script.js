@@ -13,6 +13,8 @@ const store = {
 	books: [],
 	authors: [],
 	categories: [],
+	isCreate: false,
+	editBookID: null,
 };
 
 const getCurrentDataById = (data, id) => {
@@ -133,6 +135,7 @@ function render(currentUrl, booksData) {
 			bookWrapper.querySelector('.book__img').setAttribute('alt', title);
 
 			bookWrapper.querySelector('.btn__delete').addEventListener('click', () => deleteBook(id));
+			bookWrapper.querySelector('.btn__change').addEventListener('click', () => editBook(book));
 
 			listBooksNode.appendChild(bookWrapper);
 		});
@@ -214,7 +217,9 @@ const closeModal = () => {
 	clearError();
 };
 
-const createBook = async () => {
+const createBook = () => {
+	document.querySelector('.popup__button_add').innerText = 'Добавить книгу';
+	store.isCreate = true;
 	popup.style.display = 'block';
 	overlay.style.display = 'block';
 	const { authors, categories } = store;
@@ -249,7 +254,7 @@ inputSearch.addEventListener('input', (e) => {
 
 // ! Add book
 
-const isValid = () => {
+const isValid = (node) => {
 	const MIN_LENGTH = 20;
 	const isRequired = [
 		document.querySelector('#book__name'),
@@ -258,19 +263,27 @@ const isValid = () => {
 		document.querySelector('#book__categ'),
 		document.querySelector('#book__descr'),
 	];
-	clearError();
-	isRequired.forEach((input) => {
-		if (!input.value) {
-			const errorNode = input.parentNode.querySelector('.error');
+	if (!node) {
+		clearError();
+		isRequired.forEach((input) => {
+			if (!input.value) {
+				const errorNode = input.parentNode.querySelector('.error');
+				errorNode.innerText = 'This field is required';
+				errorNode.style.display = 'block';
+			}
+		});
+
+		if (document.querySelector('#book__descr').value.length < MIN_LENGTH) {
+			const errorNode = document.querySelector('#book__descr').parentNode.querySelector('.error');
+			errorNode.innerText = `Min length is ${MIN_LENGTH}`;
+			errorNode.style.display = 'block';
+		}
+	} else {
+		if (!node.value) {
+			const errorNode = node.parentNode.querySelector('.error');
 			errorNode.innerText = 'This field is required';
 			errorNode.style.display = 'block';
 		}
-	});
-
-	if (document.querySelector('#book__descr').value.length < MIN_LENGTH) {
-		const errorNode = document.querySelector('#book__descr').parentNode.querySelector('.error');
-		errorNode.innerText = `Min length is ${MIN_LENGTH}`;
-		errorNode.style.display = 'block';
 	}
 
 	return isRequired.every((node) => !!node.value);
@@ -286,7 +299,7 @@ const isValid = () => {
 	document.querySelector('#book__descr'),
 ].forEach((input) =>
 	input.addEventListener('blur', (e) => {
-		isValid();
+		isValid(e.target);
 	})
 );
 
@@ -294,7 +307,7 @@ document.querySelector('#book__descr').addEventListener('keyup', (e) => {
 	document.querySelector('label.textarea > b').innerText = e.target.value.length;
 });
 
-document.querySelector('.popup__button_add').addEventListener('click', async () => {
+document.querySelector('.popup__button_add').addEventListener('click', async (e) => {
 	if (isValid()) {
 		const book = {
 			categoryID: +document.querySelector('#book__categ').value,
@@ -307,10 +320,32 @@ document.querySelector('.popup__button_add').addEventListener('click', async () 
 			yearOfProduction: document.querySelector('#book__year').value,
 			description: document.querySelector('#book__descr').value,
 		};
-		await api.books.createBook(book);
+		if (store.isCreate) {
+			await api.books.createBook(book);
+		} else {
+			await api.books.editBook(book, store.editBookID);
+		}
 		const books = await api.books.getBooks();
 		store.books = books;
+		store.editBookID = null;
 		closeModal();
 		render(location.pathname, store.books);
 	}
 });
+
+const editBook = (book) => {
+	createBook();
+	store.isCreate = false;
+	store.editBookID = book.id;
+	document.querySelector('.popup__button_add').innerText = 'Редактировать книгу';
+	const { title, pages, language, imgBook, authorID, quality, yearOfProduction, categoryID, description } = book;
+	document.querySelector('#book__name').value = title;
+	document.querySelector('#book__pages').value = pages;
+	document.querySelector('#book__language').value = language;
+	document.querySelector('#book__img').value = imgBook;
+	document.querySelector('#book__author').value = authorID;
+	document.querySelector('#book__quality').value = quality;
+	document.querySelector('#book__year').value = yearOfProduction;
+	document.querySelector('#book__categ').value = categoryID;
+	document.querySelector('#book__descr').value = description;
+};
