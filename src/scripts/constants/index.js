@@ -32,7 +32,20 @@ export const api = {
 				console.warn(error);
 			}
 		},
-		createBook: () => {},
+		createBook: async (data) => {
+			try {
+				const createdBook = await fetch(`${BASE}/allBooks`, {
+					method: 'POST',
+					body: JSON.stringify(data),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}).then((res) => res.json());
+				return createdBook;
+			} catch (error) {
+				console.warn(error);
+			}
+		},
 		editBook: () => {},
 	},
 	authors: {
