@@ -7,6 +7,14 @@ const overlay = document.querySelector('.overlay');
 const popup = document.querySelector('.popup');
 const closeBtnNode = document.querySelector('.popup-close');
 
+// ! Data
+
+const store = {
+	books: [],
+	authors: [],
+	categories: [],
+};
+
 const getCurrentDataById = (data, id) => {
 	const object = data.find((item) => item.id === id);
 	if (!object) {
@@ -41,22 +49,20 @@ const filterBooks = (books, url) => {
 	if (url === urls.booksNauka.href) {
 		return books.filter((book) => book.categoryID === urls.booksNauka.id);
 	}
-	return [];
+	return null;
 };
 
 const deleteBook = async (id) => {
 	await api.books.deleteBook(id);
-	render(location.pathname);
+	render(location.pathname, store.books);
 };
 
-async function render(currentUrl) {
-	let books = await api.books.getBooks();
-	const authors = await api.authors.getAuthors();
-	const categories = await api.categories.getCategories();
-	books = filterBooks(books, currentUrl);
+function render(currentUrl, booksData) {
+	const { authors, categories } = store;
+	const books = filterBooks(booksData, currentUrl);
 
-	if (!books.length) {
-		rederPageNotFound();
+	if (!books) {
+		return rederPageNotFound();
 	} else {
 		removeTitle404();
 	}
@@ -102,16 +108,22 @@ document.querySelectorAll('a').forEach((link) =>
 		e.preventDefault();
 		const href = e.target.getAttribute('href');
 		history.pushState(null, '', href);
-		render(href);
+		render(href, store.books);
 	})
 );
 
 window.addEventListener('popstate', () => {
-	render(location.pathname);
+	render(location.pathname, store.books);
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-	render(location.pathname);
+document.addEventListener('DOMContentLoaded', async () => {
+	const books = await api.books.getBooks();
+	const authors = await api.authors.getAuthors();
+	const categories = await api.categories.getCategories();
+	store.books = books;
+	store.authors = authors;
+	store.categories = categories;
+	render(location.pathname, store.books);
 });
 
 const closeModal = () => {
@@ -122,8 +134,7 @@ const closeModal = () => {
 const createBook = async () => {
 	popup.style.display = 'block';
 	overlay.style.display = 'block';
-	const authors = await api.authors.getAuthors();
-	const categories = await api.categories.getCategories();
+	const { authors, categories } = store;
 	const authSelect = document.querySelector('#book__author');
 	const catSelect = document.querySelector('#book__categ');
 	authors.forEach((author) => {
@@ -150,5 +161,7 @@ closeBtnNode.addEventListener('click', closeModal);
 const inputSearch = document.querySelector('.header__input input');
 
 inputSearch.addEventListener('input', (e) => {
-	console.warn('-------', e.target.value);
+	const { value } = e.target;
+	const filteredBooks = store.books.filter((book) => book.title.includes(value));
+	render(location.pathname, filteredBooks);
 });
