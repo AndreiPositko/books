@@ -1,29 +1,45 @@
 import { api } from './api/index';
 import { bookTemplate } from './bookTemplate';
 
-const url = 'https://localhost:3004/books';
-
 //Variables
-const listBooks = document.querySelector('.list__books');
-console.log(listBooks);
+const listBooksNode = document.querySelector('.list__books');
+console.log(listBooksNode);
 
 const renderBook = async () => {
-  const data = await api.books.getBooks();
-  listBooks.innerHTML = '';
-  const bookWrapper = document.createElement('li');
-  bookWrapper.innerHTML = bookTemplate;
-  console.log(data);
+
+  const books = await api.books.getBooks();
+  listBooksNode.innerHTML = '';  
+  books.forEach(book => {
+    const { title, authorID, pages, quality, language, date, categoryID, description, imgBook } = book;
+    const bookWrapper = document.createElement('li');
+    bookWrapper.innerHTML = bookTemplate;
+    bookWrapper.querySelector('.book__title').innerHTML = `<b>${title}</b>`;
+    bookWrapper.querySelector('.book__author').innerHTML = `<b>Автор: </b>${authorID}`;
+
+    if (pages) {
+      bookWrapper.querySelector('.book__pages').innerHTML = `<b>Страниц: </b>${pages}`;
+    }
+    if (quality) {
+      bookWrapper.querySelector('.book__quality').innerHTML = `<b>Качество: </b>${quality}`;
+    }
+    if (language) {
+      bookWrapper.querySelector('.book__language').innerHTML = `<b>Язык: </b>${language}`;
+    }
+    if (date) {
+      bookWrapper.querySelector('.book__date').innerHTML = `<b>Дата публикации: </b>${date}`;
+    }    
+    
+    bookWrapper.querySelector('.book__category').innerHTML = `<b>Категория: </b>${categoryID}`;
+    bookWrapper.querySelector('.description__text').innerHTML = `<b>Описание: </b>${description}`;
+    bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
+    bookWrapper.querySelector('.book__img').setAttribute('alt', title);
+    listBooksNode.appendChild(bookWrapper);
+  });
+  console.log(books);
 };
 
 renderBook();
  
-const trial = (url) => {
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-};
-
-trial();
 
 
 // import { bookTemplate } from './bookTemplate';

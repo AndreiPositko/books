@@ -1,4 +1,4 @@
-const BASE = `https://localhost:3004`;
+const BASE = `http://localhost:3004`;
 
 export const urls = {
     booksNauka: { id: 1, href: '/nauka' },

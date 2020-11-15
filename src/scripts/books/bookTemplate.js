@@ -9,17 +9,14 @@ export const bookTemplate = `
                   <img class="book__img" src="#" alt="">
                 </div>
                   <div class="books__info">
-                  <p class="title__book"></p>
+                  <p class="book__title"></p>
                   <p class="book__author"></p>
                   <p class="book__pages"></p>
                   <p class="book__quality"></p>
                   <p class="book__language"></p>
-                  <p class="publishing__date"></p>
+                  <p class="book__date"></p>
                   <p class="book__category"></p>
                   <div class="block__description">
-                    <b>
-                      <p class="description__name">Описание:</p>
-                    </b>
                     <p class="description__text"></p>
                   </div>
                 </div>
