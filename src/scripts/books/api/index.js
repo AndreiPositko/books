@@ -36,6 +36,24 @@ export const api = {
             }
         }
     },
-    authors: {},
-    categories: {},
+    authors: {
+        getAuthors: async () => {
+            try {
+                const authors = await fetch(`${BASE}/authors`).then((result) => result.json());
+                return authors;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
+    categories: {
+        getCategories: async () => {
+            try {
+                const categories = await fetch(`${BASE}/categories`).then((result) => result.json());
+                return categories;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
 };
