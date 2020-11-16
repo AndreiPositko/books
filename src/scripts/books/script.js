@@ -7,7 +7,12 @@ import { filterBooks } from './filterBooks/index';
 //Variables
 const listBooksNode = document.querySelector('.list__books');
 
-const renderBook = async (currentUrl) => {
+const deleteBook = async(id) => {
+  await api.books.deleteBook(id);
+  renderBook(location.pathname);
+};
+
+async function renderBook (currentUrl) {
   let books = await api.books.getBooks();
   const authors = await api.authors.getAuthors();
   const categories = await api.categories.getCategories();
@@ -21,7 +26,7 @@ const renderBook = async (currentUrl) => {
 
   listBooksNode.innerHTML = '';  
   books.forEach(book => {
-    const { title, authorID, pages, quality, language, date, categoryID, description, imgBook } = book;
+    const { title, authorID, pages, quality, language, date, categoryID, description, imgBook, id } = book;
     const bookWrapper = document.createElement('li');
     bookWrapper.innerHTML = bookTemplate;
     bookWrapper.querySelector('.book__title').innerHTML = `<b>${title}</b>`;
@@ -44,6 +49,7 @@ const renderBook = async (currentUrl) => {
     bookWrapper.querySelector('.description__text').innerHTML = `<b>Описание: </b>${description}`;
     bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
     bookWrapper.querySelector('.book__img').setAttribute('alt', title);
+    bookWrapper.querySelector('.btn__delete').addEventListener('click', () => deleteBook(id));
     listBooksNode.appendChild(bookWrapper);
   }); 
   console.log(books);

@@ -29,7 +29,7 @@ export const api = {
                 const deletedBook = await fetch(`${BASE}/books/${id}`, {
                     method: 'DELETE'
                 })
-                    .then((result) => result.json());
+                .then((result) => result.json());
                 return deletedBook;
             } catch (error) {
                 console.warn(error);
