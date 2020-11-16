@@ -1,29 +1,23 @@
 import { api, urls } from './api/index';
 import { bookTemplate } from './bookTemplate';
 import { getCurrentDataById } from '../getData/index';
+import { removeTitle404, renderPageNoFound } from './page404/index';
+import { filterBooks } from './filterBooks/index';
 
 //Variables
 const listBooksNode = document.querySelector('.list__books');
-console.log(listBooksNode);
-
-const filterBooks = (books, url) => {
-  if (url === urls.home.href) {
-    return books;
-  }
-  if (url === urls.booksComp.href) {
-    return books.filter(book => book.categoryID === urls.booksComp.id);
-  }
-  if (url === urls.booksNauka.href) {
-    return books.filter(book => book.categoryID === urls.booksNauka.id);
-  }
-};
 
 const renderBook = async (currentUrl) => {
-  const books = await api.books.getBooks();
+  let books = await api.books.getBooks();
   const authors = await api.authors.getAuthors();
   const categories = await api.categories.getCategories();
+  books = filterBooks(books, currentUrl);
 
-  console.warn(filterBooks(books, currentUrl));
+  if (!books.length) {
+    renderPageNoFound();
+  } else {
+    removeTitle404();
+  }
 
   listBooksNode.innerHTML = '';  
   books.forEach(book => {
