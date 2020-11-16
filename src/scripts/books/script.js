@@ -1,4 +1,4 @@
-import { api } from './api/index';
+import { api, urls } from './api/index';
 import { bookTemplate } from './bookTemplate';
 import { getCurrentDataById } from '../getData/index';
 
@@ -6,11 +6,24 @@ import { getCurrentDataById } from '../getData/index';
 const listBooksNode = document.querySelector('.list__books');
 console.log(listBooksNode);
 
-const renderBook = async () => {
- 
+const filterBooks = (books, url) => {
+  if (url === urls.home.href) {
+    return books;
+  }
+  if (url === urls.booksComp.href) {
+    return books.filter(book => book.categoryID === urls.booksComp.id);
+  }
+  if (url === urls.booksNauka.href) {
+    return books.filter(book => book.categoryID === urls.booksNauka.id);
+  }
+};
+
+const renderBook = async (currentUrl) => {
   const books = await api.books.getBooks();
   const authors = await api.authors.getAuthors();
   const categories = await api.categories.getCategories();
+
+  console.warn(filterBooks(books, currentUrl));
 
   listBooksNode.innerHTML = '';  
   books.forEach(book => {
@@ -44,7 +57,22 @@ const renderBook = async () => {
 
 renderBook();
  
+//Routing
+const links = document.querySelectorAll('a');
+links.forEach(link => link.addEventListener('click', (e) => {
+  e.preventDefault();
+  const href = link.getAttribute('href');
+  history.pushState(null, '', href);
+  renderBook(href);
+}));
 
+document.addEventListener('popstate', () => {
+  renderBook(location.pathname);
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderBook(location.pathname);
+});
 
 // import { bookTemplate } from './bookTemplate';
 // import { ROUTE, booksApi, authorApi, categoryApi } from '../constants';
