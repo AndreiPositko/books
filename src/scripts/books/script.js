@@ -3,9 +3,14 @@ import { bookTemplate } from './bookTemplate';
 import { getCurrentDataById } from '../getData/index';
 import { removeTitle404, renderPageNoFound } from './page404/index';
 import { filterBooks } from './filterBooks/index';
+import { closeModal, createBook, overlay } from './modal/index';
 
 //Variables
 const listBooksNode = document.querySelector('.list__books');
+const addBook = document.querySelector('.add__book');
+
+const closeBtn = document.querySelector('.popup-close');
+
 
 const deleteBook = async(id) => {
   await api.books.deleteBook(id);
@@ -73,6 +78,14 @@ document.addEventListener('popstate', () => {
 window.addEventListener('DOMContentLoaded', () => {
   renderBook(location.pathname);
 });
+
+
+//Overlay
+
+addBook.addEventListener('click', createBook);
+overlay.addEventListener('click', closeModal);
+closeBtn.addEventListener('click', closeModal);
+
 
 // import { bookTemplate } from './bookTemplate';
 // import { ROUTE, booksApi, authorApi, categoryApi } from '../constants';

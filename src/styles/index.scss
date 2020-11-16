@@ -242,6 +242,8 @@ li.all__books a {
 }
 
 .popup {
+  z-index: 9;
+  display: none;
   position: fixed;
   left: 50%;
   top: 160px;
