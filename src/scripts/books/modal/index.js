@@ -1,3 +1,5 @@
+import { store } from '../store/index';
+
 const popup = document.querySelector('.popup');
 export const overlay = document.querySelector('.overlay');
 
@@ -9,9 +11,7 @@ export const closeModal = () => {
 export const createBook = async () => {
   overlay.classList.add('show');
   popup.classList.add('show');
-  const authors = await api.authors.getAuthors();
-  const categories = await api.categories.getCategories();
-  
+  const { authors, categories } = store;
   const authSelect = document.querySelector('#book__author');
   const categorySelect = document.querySelector('#book__categ');
 

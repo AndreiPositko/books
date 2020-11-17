@@ -4,26 +4,25 @@ import { getCurrentDataById } from '../getData/index';
 import { removeTitle404, renderPageNoFound } from './page404/index';
 import { filterBooks } from './filterBooks/index';
 import { closeModal, createBook, overlay } from './modal/index';
+import { store } from './store/index';
+import '../books/search';
 
 //Variables
+
 const listBooksNode = document.querySelector('.list__books');
 const addBook = document.querySelector('.add__book');
-
 const closeBtn = document.querySelector('.popup-close');
-
 
 const deleteBook = async(id) => {
   await api.books.deleteBook(id);
-  renderBook(location.pathname);
+  renderBook(location.pathname, store.books);
 };
 
-async function renderBook (currentUrl) {
-  let books = await api.books.getBooks();
-  const authors = await api.authors.getAuthors();
-  const categories = await api.categories.getCategories();
-  books = filterBooks(books, currentUrl);
+function renderBook(currentUrl, booksData) {
+  const { authors, categories } = store;
+  const books = filterBooks(booksData, currentUrl);
 
-  if (!books.length) {
+  if (!books) {
     renderPageNoFound();
   } else {
     removeTitle404();
@@ -60,31 +59,47 @@ async function renderBook (currentUrl) {
   console.log(books);
 };
 
-renderBook();
- 
 //Routing
 const links = document.querySelectorAll('a');
 links.forEach(link => link.addEventListener('click', (e) => {
   e.preventDefault();
   const href = link.getAttribute('href');
   history.pushState(null, '', href);
-  renderBook(href);
+  renderBook(href, store.books);
 }));
 
 document.addEventListener('popstate', () => {
-  renderBook(location.pathname);
+  renderBook(location.pathname, store.books);
 });
 
-window.addEventListener('DOMContentLoaded', () => {
-  renderBook(location.pathname);
-});
+window.addEventListener('DOMContentLoaded', async () => {
+  let books = await api.books.getBooks();
+  const authors = await api.authors.getAuthors();
+  const categories = await api.categories.getCategories();
+  store.books = books;
+  store.authors = authors;
+  store.categories = categories;
+  // console.warn(store);
 
+  renderBook(location.pathname, store.books);
+});
 
 //Overlay
 
 addBook.addEventListener('click', createBook);
 overlay.addEventListener('click', closeModal);
 closeBtn.addEventListener('click', closeModal);
+
+
+//Search
+
+const inputSearch = document.querySelector('.header__input');
+
+inputSearch.addEventListener('input', (e) => {
+  const { value } = e.target;
+  const filteredBooks = store.books.filter(book => book.title.includes(value));
+  renderBook(location.pathname, filteredBooks);
+});
 
 
 // import { bookTemplate } from './bookTemplate';

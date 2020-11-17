@@ -10,5 +10,5 @@ export const filterBooks = (books, url) => {
   if (url === urls.booksNauka.href) {
     return books.filter(book => book.categoryID === urls.booksNauka.id);
   }
-  return [];
+  return null;
 };
