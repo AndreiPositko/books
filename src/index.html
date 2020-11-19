@@ -83,6 +83,7 @@
         <li class="popup__item">
           <label class="popup__label" for="book__name">Введите название Вашей книги</label>
           <input class="popup__input" type="text" id="book__name">
+          <p class="error__text"></p>
         </li>
   
         <li class="popup__item">
@@ -90,6 +91,7 @@
           <select class="popup__select" type="text" id="book__author">
             <option value="">Выберете автора книги</option>
           </select>
+          <p class="error__text"></p>
         </li>
   
         <li class="popup__item">
@@ -115,6 +117,7 @@
         <li class="popup__item">
           <label class="popup__label" for="book__img">Изображение книги</label>
           <input class="popup__input" type="text" id="book__img">
+          <p class="error__text"></p>
         </li>
   
         <li class="popup__item">
@@ -122,18 +125,20 @@
           <select class="popup__select" type="text" id="book__categ">
             <option value="">Выберете категорию книги</option>
           </select>
+          <p class="error__text"></p>
         </li>
   
         <li class="popup__item textarea">
-          <label class="popup__label textarea" for="book__descr">Краткое описание книги</label>
+          <label class="popup__label textarea" for="book__descr">Краткое описание книги - <b>0</b> символов</label>
           <textarea rows="4" colls="10" class="popup__textarea" type="text" id="book__descr"></textarea>
+          <p class="error__text"></p>
         </li>
       </ul>
   
       <div class="btn__popup_group">
         <button class="popup__button_add btn__overlay">Добавить книгу</button>
         <button class="popup__btn_clean btn__overlay">Очистить</button>
-        <button class="popup__btn_edit btn__overlay">Изменить книгу</button>
+        <!-- <button class="popup__btn_edit btn__overlay">Изменить книгу</button> -->
       </div>
     </div>
     <!-- /.popup-form -->

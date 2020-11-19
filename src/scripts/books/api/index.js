@@ -1,3 +1,5 @@
+import { createBook } from "../modal";
+
 const BASE = `http://localhost:3004`;
 
 export const urls = {
@@ -34,7 +36,21 @@ export const api = {
             } catch (error) {
                 console.warn(error);
             }
-        }
+        },
+        createBook: async (data) => {
+            try {
+                const createdBook = await fetch(`${BASE}/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(data)
+                }).then((res) => res.json());
+                return createBook;
+            } catch {
+                console.warn(error);
+            }
+        },
     },
     authors: {
         getAuthors: async () => {

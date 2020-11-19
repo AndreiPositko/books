@@ -409,6 +409,8 @@ li.all__books a {
 }
 
 .error__text {
+  display: none;
+  font-weight: bold;
   font-size: 14px;
   color: red;
   padding-top: 0;

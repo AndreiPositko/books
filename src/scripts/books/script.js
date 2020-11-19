@@ -5,7 +5,7 @@ import { removeTitle404, renderPageNoFound } from './page404/index';
 import { filterBooks } from './filterBooks/index';
 import { closeModal, createBook, overlay } from './modal/index';
 import { store } from './store/index';
-import '../books/search';
+import { isValid } from './validation/index';
 
 //Variables
 
@@ -21,13 +21,11 @@ const deleteBook = async(id) => {
 function renderBook(currentUrl, booksData) {
   const { authors, categories } = store;
   const books = filterBooks(booksData, currentUrl);
-
   if (!books) {
     renderPageNoFound();
   } else {
     removeTitle404();
   }
-
   listBooksNode.innerHTML = '';  
   books.forEach(book => {
     const { title, authorID, pages, quality, language, date, categoryID, description, imgBook, id } = book;
@@ -90,16 +88,39 @@ addBook.addEventListener('click', createBook);
 overlay.addEventListener('click', closeModal);
 closeBtn.addEventListener('click', closeModal);
 
-
 //Search
 
 const inputSearch = document.querySelector('.header__input');
-
 inputSearch.addEventListener('input', (e) => {
   const { value } = e.target;
   const filteredBooks = store.books.filter(book => book.title.includes(value));
   renderBook(location.pathname, filteredBooks);
 });
+
+// Add new book with validation
+
+const addBookToServer = document.querySelector('.popup__button_add');
+addBookToServer.addEventListener('click', async () => {
+  console.log(isValid());
+  if (isValid()) {
+    const book = {
+      categoryID: +document.querySelector('#book__categ').value,
+      imgBook: document.querySelector('#book__img').value,
+      title: document.querySelector('#book__name').value,
+      authorID: +document.querySelector('#book__author').value,
+      pages: document.querySelector('#book__pages').value,
+      quality: document.querySelector('#book__quality').value,
+      language: document.querySelector('#book__language').value,
+      date: document.querySelector('#book__year').value,
+      description: document.querySelector('#book__descr').value,
+    };
+    await api.books.createBook(book);
+    const books = await api.books.getBooks();
+    store.books = books;
+    renderBook(location.pathname, store.books);
+  }
+});
+
 
 
 // import { bookTemplate } from './bookTemplate';
