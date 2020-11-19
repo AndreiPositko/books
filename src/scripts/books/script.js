@@ -1,5 +1,5 @@
 import { api, urls } from './api/index';
-import { bookTemplate } from './bookTemplate';
+import { bookTemplate, singleBookTemplate } from './bookTemplate';
 import { getCurrentDataById } from '../getData/index';
 import { removeTitle404, renderPageNoFound } from './page404/index';
 import { filterBooks } from './filterBooks/index';
@@ -15,6 +15,8 @@ const closeBtn = document.querySelector('.popup-close');
 
 const deleteBook = async(id) => {
   await api.books.deleteBook(id);
+  const books = await api.books.getBooks();
+  store.books = books;
   renderBook(location.pathname, store.books);
 };
 
@@ -22,16 +24,24 @@ function renderBook(currentUrl, booksData) {
   const { authors, categories } = store;
   const books = filterBooks(booksData, currentUrl);
   if (!books) {
-    renderPageNoFound();
+    return renderPageNoFound();
   } else {
     removeTitle404();
   }
   listBooksNode.innerHTML = '';  
-  books.forEach(book => {
+
+  if (Array.isArray(books)) {
+    books.forEach(book => {
     const { title, authorID, pages, quality, language, date, categoryID, description, imgBook, id } = book;
     const bookWrapper = document.createElement('li');
     bookWrapper.innerHTML = bookTemplate;
     bookWrapper.querySelector('.book__title').innerHTML = `<b>${title}</b>`;
+
+    const catId = Object.values(urls).find((obj) => obj.id === categoryID);
+    bookWrapper
+      .querySelector('.book__title')
+      .setAttribute('href', `${catId.href}/${id}`);
+  
     bookWrapper.querySelector('.book__author').innerHTML = `<b>Автор: </b>${getCurrentDataById(authors, authorID)}`;
 
     if (pages) {
@@ -54,21 +64,29 @@ function renderBook(currentUrl, booksData) {
     bookWrapper.querySelector('.btn__delete').addEventListener('click', () => deleteBook(id));
     listBooksNode.appendChild(bookWrapper);
   }); 
-  console.log(books);
+  } else {
+    const singleWrapper = document.createElement('li');
+    singleWrapper.innerHTML = singleBookTemplate;
+    listBooksNode.appendChild(singleWrapper); 
+    const singleTitle = document.querySelector('.single__title');
+    const singleImg = document.querySelector('.single__img');
+    console.log(singleTitle);
+    singleTitle.innerText = books.title;
+    singleImg.setAttribute('src', books.imgBook);
+  }
 };
 
 //Routing
-const links = document.querySelectorAll('a');
-links.forEach(link => link.addEventListener('click', (e) => {
-  e.preventDefault();
-  const href = link.getAttribute('href');
-  history.pushState(null, '', href);
-  renderBook(href, store.books);
-}));
 
-document.addEventListener('popstate', () => {
-  renderBook(location.pathname, store.books);
-});
+const addRouteLogicForLink = () => {
+  const links = document.querySelectorAll('a');
+  links.forEach(link => link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const href = link.getAttribute('href');
+    history.pushState(null, '', href);
+    renderBook(href, store.books);
+  }));
+};
 
 window.addEventListener('DOMContentLoaded', async () => {
   let books = await api.books.getBooks();
@@ -77,9 +95,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   store.books = books;
   store.authors = authors;
   store.categories = categories;
-  // console.warn(store);
 
   renderBook(location.pathname, store.books);
+  addRouteLogicForLink();
+
+  window.addEventListener('popstate', () => {
+    renderBook(location.pathname, store.books);
+    addRouteLogicForLink();
+  
+  });
 });
 
 //Overlay

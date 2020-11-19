@@ -9,7 +9,7 @@ export const bookTemplate = `
           <img class="book__img" src="#" alt="">
         </div>
         <div class="books__info">
-          <p class="book__title"></p>
+          <a class="book__title"></a>
           <p class="book__author"></p>
           <p class="book__pages"></p>
           <p class="book__quality"></p>
@@ -22,3 +22,8 @@ export const bookTemplate = `
         </div>
       </div>
   </div>`;
+
+export const singleBookTemplate = `
+  <h1 class="single__title"></h1>
+  <img class="single__img"></img>
+`;
