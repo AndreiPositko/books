@@ -35,7 +35,7 @@ function renderBook(currentUrl, booksData) {
   listBooksNode.innerHTML = '';  
 
   if (Array.isArray(books)) {
-    books.forEach(book => {
+    books.reverse().forEach(book => {
     const { title, authorID, pages, quality, language, date, categoryID, description, imgBook, id } = book;
     const bookWrapper = document.createElement('li');
     bookWrapper.innerHTML = bookTemplate;
