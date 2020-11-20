@@ -12,6 +12,8 @@ import { isValid } from './validation/index';
 const listBooksNode = document.querySelector('.list__books');
 const addBook = document.querySelector('.add__book');
 const closeBtn = document.querySelector('.popup-close');
+const inputSearch = document.querySelector('.header__input');
+const addBookToServer = document.querySelector('.popup__button_add');
 
 const deleteBook = async(id) => {
   await api.books.deleteBook(id);
@@ -19,6 +21,8 @@ const deleteBook = async(id) => {
   store.books = books;
   renderBook(location.pathname, store.books);
 };
+
+//Render Book
 
 function renderBook(currentUrl, booksData) {
   const { authors, categories } = store;
@@ -62,6 +66,7 @@ function renderBook(currentUrl, booksData) {
     bookWrapper.querySelector('.book__img').setAttribute('src', imgBook);
     bookWrapper.querySelector('.book__img').setAttribute('alt', title);
     bookWrapper.querySelector('.btn__delete').addEventListener('click', () => deleteBook(id));
+    bookWrapper.querySelector('.btn__change').addEventListener('click', () => editBook(book));
     listBooksNode.appendChild(bookWrapper);
   }); 
   } else {
@@ -114,18 +119,15 @@ closeBtn.addEventListener('click', closeModal);
 
 //Search
 
-const inputSearch = document.querySelector('.header__input');
 inputSearch.addEventListener('input', (e) => {
   const { value } = e.target;
   const filteredBooks = store.books.filter(book => book.title.includes(value));
   renderBook(location.pathname, filteredBooks);
 });
 
-// Add new book with validation
+// Send new book with validation to SERVER
 
-const addBookToServer = document.querySelector('.popup__button_add');
 addBookToServer.addEventListener('click', async () => {
-  console.log(isValid());
   if (isValid()) {
     const book = {
       categoryID: +document.querySelector('#book__categ').value,
@@ -138,13 +140,39 @@ addBookToServer.addEventListener('click', async () => {
       date: document.querySelector('#book__year').value,
       description: document.querySelector('#book__descr').value,
     };
-    await api.books.createBook(book);
+    if (store.isCreate) {
+      await api.books.createBook(book);
+    } else {
+      await api.books.editBook(book, store.editBookID);
+    }
+    
     const books = await api.books.getBooks();
     store.books = books;
+    store.editBookID = null;
     renderBook(location.pathname, store.books);
   }
 });
 
+// Edit book
+
+const editBook = (book) => {
+  createBook();
+
+  store.isCreate = false;
+  store.editBookID = book.id;
+  document.querySelector('.popup__button_add ').innerText = 'Редактировать книгу';
+  const { title, pages, quality, language, date, imgBook, categoryID, authorID, description } = book;
+  document.querySelector('#book__name').value = title;
+  document.querySelector('#book__author').value = authorID;
+  document.querySelector('#book__pages').value = pages;
+  document.querySelector('#book__quality').value = quality;
+  document.querySelector('#book__language').value = language;
+  document.querySelector('#book__year').value = date;
+  document.querySelector('#book__img').value = imgBook;
+  document.querySelector('#book__categ').value = categoryID;
+  document.querySelector('#book__descr').value = description;
+  console.log('id', id);
+};
 
 
 // import { bookTemplate } from './bookTemplate';

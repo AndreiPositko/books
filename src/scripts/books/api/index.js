@@ -51,6 +51,20 @@ export const api = {
                 console.warn(error);
             }
         },
+        editBook: async (data, id) => {
+            try {
+                const editedBook = await fetch(`${BASE}/books/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(data)
+                }).then((res) => res.json());
+                return editedBook;
+            } catch {
+                console.warn(error);
+            }
+        }
     },
     authors: {
         getAuthors: async () => {

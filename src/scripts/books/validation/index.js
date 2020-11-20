@@ -1,12 +1,16 @@
-export const isValid = () => {
+export const isValid = (node) => {
   const MIN_LENGTH = 20;
-  const isRequired = [
+
+    const isRequired = [
     document.querySelector('#book__name'),
     document.querySelector('#book__author'),
     document.querySelector('#book__img'),
     document.querySelector('#book__categ'),
     document.querySelector('#book__descr'),
   ];
+  
+  if (!node) {
+    
   document.querySelectorAll('.popup .error__text').forEach((errorNode) => {
     errorNode.innerText = '';
     errorNode.style.display = 'none';
@@ -25,6 +29,14 @@ export const isValid = () => {
     errorNode.innerText = `Min length is ${MIN_LENGTH}`;
     errorNode.style.display = 'block';
   }
+  } else {
+    if (!node.value) {
+      const errorNode = node.parentNode.querySelector('.error__text');
+      errorNode.innerText = 'This field is required!';
+      errorNode.style.display = 'block';
+    }
+  }
+
   return isRequired.every((node) => node.value);
 };
 
@@ -41,7 +53,8 @@ const modalInputs = [
 ];
 
 modalInputs.forEach((input) => input.addEventListener('blur', e => {
-  isValid();
+  isValid(e.target);
+  console.log(1111111111111111, e.target);
 }));
 
 document.querySelector('#book__descr').addEventListener('keyup', e => {

@@ -33,6 +33,8 @@ export const closeModal = () => {
 };
 
 export const createBook = async () => {
+  store.isCreate = true;
+  document.querySelector('.popup__button_add ').innerText = 'Добавить книгу';
   overlay.classList.add('show');
   popup.classList.add('show');
   const { authors, categories } = store;
@@ -51,4 +53,6 @@ export const createBook = async () => {
     option.innerText = category.name;
     categorySelect.appendChild(option);
   });
+  document.querySelector('.popup').remove.classList('show');
+
 };
